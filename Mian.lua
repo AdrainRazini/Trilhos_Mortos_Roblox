@@ -170,7 +170,7 @@ local url = {
 for _, script in ipairs(url) do
     createButton(script.name:upper(), function()
         local success, response = pcall(function()
-            return game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/mastermod/refs/heads/main/script/" .. script.path)
+            return game:HttpGet("https://raw.githubusercontent.com/AdrainRazini/" ..GITHUB_REPO.. "/refs/heads/main/script/" .. script.path)
         end)
 
         if success then
