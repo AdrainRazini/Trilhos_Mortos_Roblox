@@ -163,22 +163,8 @@ createButton("HD ADMIM", function()
     end)
 
 local url = {
-    {name = "inventario", path = "inventario"},
-    {name = "flyGui", path = "flyGui"},
-    {name = "Emote", path = "dance"},
-    {name = "RatDance", path = "RatDance"},
-    {name = "TpTool", path = "TpTool"},
-    {name = "cordenadas", path = "Local"},
-    {name = "Tpcordenadas", path = "Tpcordenadas"},
-    {name = "Keyboard", path = "Keyboard"},
-    {name = "dash", path = "dash"},
-    {name = "Lockcamera", path = "Lockcamera"},
-    {name = "AimbotV2", path = "AimbotV2"},
-    {name = "AimbotV3", path = "AimbotV3"},
-    {name = "Andarnoar", path = "Andarnoar"},
-    {name = "EspV2", path = "EspV2"},
-    {name = "JumpTool", path = "JumpTool"},
-    {name = "SpeedTool", path = "SpeedTool"}
+    {name = "frame", path = "frame_visor.lua"},
+   
 }
 
 for _, script in ipairs(url) do
