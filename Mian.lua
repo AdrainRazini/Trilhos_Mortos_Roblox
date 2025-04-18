@@ -9,7 +9,7 @@ local IMG_ICON = "rbxassetid://117585506735209"
 
 -- Notificação inicial
 game:GetService("StarterGui"):SetCore("SendNotification", { 
-	Title = "MASTERMOD",
+	Title = GITHUB_REPO,
 	Text = "Adrian75556435",
 	Icon = "rbxthumb://type=Asset&id=102637810511338&w=150&h=150",
 	Duration = 16
