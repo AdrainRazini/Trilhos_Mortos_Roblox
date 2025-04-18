@@ -7,13 +7,77 @@ local GITHUB_USER = "AdrainRazini"
 local GITHUB_REPO = "Trilhos_Mortos_Roblox"
 local IMG_ICON = "rbxassetid://117585506735209"
 
--- Notificação inicial
-game:GetService("StarterGui"):SetCore("SendNotification", { 
-	Title = GITHUB_REPO,
-	Text = "Adrian75556435",
-	Icon = "rbxthumb://type=Asset&id=102637810511338&w=150&h=150",
-	Duration = 16
-})
+
+
+-- 🔔 Alerta no canto inferior direito do Mod_Explorer - Empilhamento
+local activeAlerts = {}
+
+local function showAlertInMenu(menuGui, text, duration)
+	if not menuGui then return end
+
+	
+	-- Cria o frame do alerta
+	local alertFrame = Instance.new("Frame")
+	alertFrame.Size = UDim2.new(0, 280, 0, 50)
+	alertFrame.Position = UDim2.new(1, -300, 1, -60 - (#activeAlerts * 60)) -- canto inferior direito
+	alertFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+	alertFrame.BackgroundTransparency = 0.15
+	alertFrame.BorderSizePixel = 0
+	alertFrame.AnchorPoint = Vector2.new(0, 1) -- âncora no canto inferior esquerdo do alerta
+	alertFrame.Name = "LocalAlert"
+	alertFrame.ZIndex = 999
+	alertFrame.Parent = menuGui
+
+	table.insert(activeAlerts, alertFrame)
+
+	local corner = Instance.new("UICorner", alertFrame)
+	corner.CornerRadius = UDim.new(0, 8)
+
+	local label = Instance.new("TextLabel", alertFrame)
+	label.Size = UDim2.new(1, -20, 1, -10)
+	label.Position = UDim2.new(0, 10, 0, 5)
+	label.BackgroundTransparency = 1
+	label.Text = text
+	label.TextColor3 = Color3.fromRGB(255, 255, 255)
+	label.Font = Enum.Font.Gotham
+	label.TextSize = 17
+	label.TextWrapped = true
+	label.ZIndex = 1000
+
+	-- Fade e destruição depois de um tempo
+	task.delay(duration or 3, function()
+		for i = 1, 10 do
+			alertFrame.BackgroundTransparency += 0.05
+			label.TextTransparency += 0.05
+			task.wait(0.04)
+		end
+
+		alertFrame:Destroy()
+
+		-- Remove da lista e atualiza posições restantes
+		for i, alert in ipairs(activeAlerts) do
+			if alert == alertFrame then
+				table.remove(activeAlerts, i)
+				break
+			end
+		end
+
+		for i, alert in ipairs(activeAlerts) do
+			alert:TweenPosition(
+				UDim2.new(1, -300, 1, -60 - ((i - 1) * 60)),
+				Enum.EasingDirection.Out,
+				Enum.EasingStyle.Quad,
+				0.25,
+				true
+			)
+		end
+	end)
+end
+
+local player = game.Players.LocalPlayer
+ showAlertInMenu(ScreenGui, "Bem Vindo " ..player.Name  , 10)
+
+
 
 -- Criar GUI
 function criar_Gui_Frame()
@@ -158,6 +222,9 @@ function criar_Gui_Frame()
 		end)
 	end
 end
+
+
+
 
 -- Executa o menu
 criar_Gui_Frame()
