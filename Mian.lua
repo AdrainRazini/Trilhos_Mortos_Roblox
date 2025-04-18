@@ -6,80 +6,11 @@ if existingScreenGui then return end
 local GITHUB_USER = "AdrainRazini"
 local GITHUB_REPO = "Trilhos_Mortos_Roblox"
 local IMG_ICON = "rbxassetid://117585506735209"
+local NAME_MOD_MENU = "Trilhos_Mortos_Mod"
 
 
 
--- 🔔 Alerta no canto inferior direito do Mod_Explorer - Empilhamento
-local activeAlerts = {}
 
-local function showAlertInMenu(menuGui, text, duration)
-	if not menuGui then return end
-
-	
-	-- Cria o frame do alerta
-	local alertFrame = Instance.new("Frame")
-	alertFrame.Size = UDim2.new(0, 280, 0, 50)
-	alertFrame.Position = UDim2.new(1, -300, 1, -60 - (#activeAlerts * 60)) -- canto inferior direito
-	alertFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-	alertFrame.BackgroundTransparency = 0.15
-	alertFrame.BorderSizePixel = 0
-	alertFrame.AnchorPoint = Vector2.new(0, 1) -- âncora no canto inferior esquerdo do alerta
-	alertFrame.Name = "LocalAlert"
-	alertFrame.ZIndex = 999
-	alertFrame.Parent = menuGui
-
-	table.insert(activeAlerts, alertFrame)
-
-	local corner = Instance.new("UICorner", alertFrame)
-	corner.CornerRadius = UDim.new(0, 8)
-
-	local label = Instance.new("TextLabel", alertFrame)
-	label.Size = UDim2.new(1, -20, 1, -10)
-	label.Position = UDim2.new(0, 10, 0, 5)
-	label.BackgroundTransparency = 1
-	label.Text = text
-	label.TextColor3 = Color3.fromRGB(255, 255, 255)
-	label.Font = Enum.Font.Gotham
-	label.TextSize = 17
-	label.TextWrapped = true
-	label.ZIndex = 1000
-
-	-- Fade e destruição depois de um tempo
-	task.delay(duration or 3, function()
-		for i = 1, 10 do
-			alertFrame.BackgroundTransparency += 0.05
-			label.TextTransparency += 0.05
-			task.wait(0.04)
-		end
-
-		alertFrame:Destroy()
-
-		-- Remove da lista e atualiza posições restantes
-		for i, alert in ipairs(activeAlerts) do
-			if alert == alertFrame then
-				table.remove(activeAlerts, i)
-				break
-			end
-		end
-
-		for i, alert in ipairs(activeAlerts) do
-			alert:TweenPosition(
-				UDim2.new(1, -300, 1, -60 - ((i - 1) * 60)),
-				Enum.EasingDirection.Out,
-				Enum.EasingStyle.Quad,
-				0.25,
-				true
-			)
-		end
-	end)
-end
-
-local player = game.Players.LocalPlayer
- showAlertInMenu(ScreenGui, "Bem Vindo " ..player.Name  , 10)
-
-
-
--- Criar GUI
 function criar_Gui_Frame()
 	local TweenService = game:GetService("TweenService")
 	local ScreenGui = Instance.new("ScreenGui")
@@ -106,7 +37,7 @@ function criar_Gui_Frame()
 	TitleBar.Size = UDim2.new(1, 0, 0, 30)
 
 	local Title = Instance.new("TextLabel", TitleBar)
-	Title.Text = "MASTERMODS"
+	Title.Text = NAME_MOD_MENU
 	Title.Size = UDim2.new(1, -30, 1, 0)
 	Title.BackgroundTransparency = 1
 	Title.TextColor3 = Color3.new(1, 1, 1)
@@ -145,6 +76,72 @@ function criar_Gui_Frame()
 		Content.CanvasSize = UDim2.new(0, 0, 0, totalHeight)
 	end
 
+	-- Função de alerta empilhável
+	local activeAlerts = {}
+
+	local function showAlertInMenu(menuGui, text, duration)
+		if not menuGui then return end
+
+		local alertFrame = Instance.new("Frame")
+		alertFrame.Size = UDim2.new(0, 280, 0, 50)
+		alertFrame.Position = UDim2.new(1, -300, 1, -60 - (#activeAlerts * 60))
+		alertFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+		alertFrame.BackgroundTransparency = 0.15
+		alertFrame.BorderSizePixel = 0
+		alertFrame.AnchorPoint = Vector2.new(0, 1)
+		alertFrame.Name = "LocalAlert"
+		alertFrame.ZIndex = 999
+		alertFrame.Parent = menuGui
+
+		table.insert(activeAlerts, alertFrame)
+
+		local corner = Instance.new("UICorner", alertFrame)
+		corner.CornerRadius = UDim.new(0, 8)
+
+		local label = Instance.new("TextLabel", alertFrame)
+		label.Size = UDim2.new(1, -20, 1, -10)
+		label.Position = UDim2.new(0, 10, 0, 5)
+		label.BackgroundTransparency = 1
+		label.Text = text
+		label.TextColor3 = Color3.fromRGB(255, 255, 255)
+		label.Font = Enum.Font.Gotham
+		label.TextSize = 17
+		label.TextWrapped = true
+		label.ZIndex = 1000
+
+		task.delay(duration or 3, function()
+			for i = 1, 10 do
+				alertFrame.BackgroundTransparency += 0.05
+				label.TextTransparency += 0.05
+				task.wait(0.04)
+			end
+
+			alertFrame:Destroy()
+
+			for i, alert in ipairs(activeAlerts) do
+				if alert == alertFrame then
+					table.remove(activeAlerts, i)
+					break
+				end
+			end
+
+			for i, alert in ipairs(activeAlerts) do
+				alert:TweenPosition(
+					UDim2.new(1, -300, 1, -60 - ((i - 1) * 60)),
+					Enum.EasingDirection.Out,
+					Enum.EasingStyle.Quad,
+					0.25,
+					true
+				)
+			end
+		end)
+	end
+
+	-- Wrapper para facilitar alertas
+	local function alert(msg, dur)
+		showAlertInMenu(ScreenGui, msg, dur or 5)
+	end
+
 	local function createButton(text, callback)
 		local Button = Instance.new("TextButton")
 		Button.Parent = Content
@@ -152,7 +149,10 @@ function criar_Gui_Frame()
 		Button.Text = text
 		Button.BackgroundColor3 = Color3.fromRGB(100, 0, 0)
 		Button.TextColor3 = Color3.new(1, 1, 1)
-		Button.MouseButton1Click:Connect(callback)
+		Button.MouseButton1Click:Connect(function()
+			alert("📦 Botão '" .. text .. "' executado", 4)
+			callback()
+		end)
 		table.insert(Buttons, Button)
 		updateCanvasSize()
 	end
@@ -193,14 +193,8 @@ function criar_Gui_Frame()
 		titleTween:Play()
 	end)
 
-	-- Botão HD ADMIM
-	createButton("HD ADMIM", function()
-		game:GetService("StarterGui"):SetCore("SendNotification", { 
-			Title = "HD ADMIM",
-			Text = "YIELD",
-			Icon = "rbxthumb://type=Asset&id=93638563594123&w=150&h=150",
-			Duration = 16
-		})
+	-- Botão HD ADMIN
+	createButton("HD ADMIM", function()	
 		loadstring(game:HttpGet("https://raw.githubusercontent.com/edgeiy/infiniteyield/master/source"))()
 	end)
 
@@ -215,13 +209,21 @@ function criar_Gui_Frame()
 				return game:HttpGet("https://raw.githubusercontent.com/" .. GITHUB_USER .. "/" .. GITHUB_REPO .. "/main/script/" .. script.path)
 			end)
 			if success then
+				alert("🧠 Script '" .. script.name:upper() .. "' carregado com sucesso!", 5)
 				loadstring(response)()
 			else
+				alert("❌ Erro ao carregar '" .. script.name:upper() .. "'", 5)
 				warn("Erro ao carregar script:", script.path)
 			end
 		end)
 	end
+
+	-- Mensagem inicial
+	local player = game.Players.LocalPlayer
+	alert("👋 Bem-vindo, " .. player.Name .. "!", 6)
+	alert("✅ Menu " ..GITHUB_REPO.. " ativado!", 5)
 end
+
 
 
 
